@@ -31,6 +31,26 @@ use tiny_toolbar\local\layout;
  */
 class plugininfo extends plugin implements plugin_with_configuration {
     /**
+     * Only users with tiny/toolbar:use get the layout; the others keep the Moodle default.
+     *
+     * Checked here because Moodle 4.5 does not check the capability of Tiny plugins on its own.
+     *
+     * @param context $context
+     * @param array $options
+     * @param array $fpoptions
+     * @param editor|null $editor
+     * @return bool
+     */
+    public static function is_enabled(
+        context $context,
+        array $options,
+        array $fpoptions,
+        ?editor $editor = null
+    ): bool {
+        return has_capability('tiny/toolbar:use', $context);
+    }
+
+    /**
      * Configuration for the editor: the layout as JSON, or an empty string to keep the Moodle default.
      *
      * @param context $context
