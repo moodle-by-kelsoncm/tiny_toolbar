@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,33 +12,24 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace tiny_toolbar\privacy;
 
 /**
- * Privacy API implementation for tool_tinycustomizer.
+ * Privacy provider of tiny_toolbar.
  *
- * @package    tool_tinycustomizer
- * @copyright  2024 IFRN
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tiny_toolbar
+ * @copyright  2026 onwards Kelson da Costa Medeiros
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_tinycustomizer\privacy;
-
-use core_privacy\local\metadata\collection;
-
-/**
- * The tool_tinycustomizer plugin does not store any personal user data.
- */
-class provider implements \core_privacy\local\metadata\provider {
-
+class provider implements \core_privacy\local\metadata\null_provider {
     /**
-     * Returns metadata about this plugin's privacy practices.
+     * Language string that explains why no personal data is stored.
      *
-     * @param  collection $collection The metadata collection to add items to.
-     * @return collection             The updated collection.
+     * @return string
      */
-    public static function get_metadata(collection $collection): collection {
-        // This plugin stores only site-wide configuration, never personal data.
-        return $collection;
+    public static function get_reason(): string {
+        return 'privacy:metadata';
     }
 }

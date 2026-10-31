@@ -1,84 +1,65 @@
 /**
- * Styles for tool_tinycustomizer.
+ * This file is part of Moodle - https://moodle.org/
  *
- * @package    tool_tinycustomizer
- * @copyright  2024 IFRN
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Moodle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moodle is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @package    tiny_toolbar
+ * @copyright  2026 onwards Kelson da Costa Medeiros
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/* ── Admin configurator page ─────────────────────────────────────────────── */
-
-.tool-tinycustomizer-configurator {
-    max-width: 1200px;
+.tiny-toolbar-builder .tiny-toolbar-group {
+    border: 1px solid #dee2e6;
+    border-radius: .375rem;
+    padding: .5rem;
+    margin-bottom: .5rem;
 }
 
-/* JSON textarea */
-.tinycustomizer-json-textarea {
-    font-size: 0.85rem;
-    min-height: 220px;
-    resize: vertical;
+.tiny-toolbar-builder .tiny-toolbar-group.is-selected {
+    border-color: #0f6cbf;
+    box-shadow: 0 0 0 .15rem rgba(15, 108, 191, .25);
 }
 
-/* JSON validation status indicator */
-.tinycustomizer-json-status {
-    display: inline-block;
-    font-size: 1.1rem;
-    min-width: 1.5em;
-    text-align: center;
+.tiny-toolbar-builder .tiny-toolbar-items,
+.tiny-toolbar-builder .tiny-toolbar-available {
+    min-height: 2.5rem;
+    gap: .25rem;
 }
 
-.tinycustomizer-json-status.is-valid {
-    color: #198754; /* Bootstrap success green */
-}
-
-.tinycustomizer-json-status.is-invalid {
-    color: #dc3545; /* Bootstrap danger red */
-}
-
-/* ── Drag-and-drop palette & builder ─────────────────────────────────────── */
-
-.tinycustomizer-palette,
-.tinycustomizer-builder {
-    min-height: 50px;
-    background: #f8f9fa;
-    transition: background 0.15s;
-}
-
-.tinycustomizer-builder {
-    min-height: 60px;
-}
-
-/* Highlight drop zone while dragging */
-.tinycustomizer-builder.drag-over,
-.tinycustomizer-palette.drag-over {
-    background: #e8f4fd;
-    border-color: #0d6efd !important;
-}
-
-/* Individual toolbar buttons in palette / builder */
-.tinycustomizer-btn {
+.tiny-toolbar-builder .tiny-toolbar-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    border: 1px solid #ced4da;
+    border-radius: 1rem;
+    padding: .125rem .5rem;
+    background: #fff;
+    font-size: .875rem;
     cursor: grab;
-    user-select: none;
-    font-size: 0.8rem;
-    padding: 0.3em 0.6em;
-    transition: opacity 0.15s;
 }
 
-.tinycustomizer-btn.dragging {
-    opacity: 0.4;
-    cursor: grabbing;
+.tiny-toolbar-builder .tiny-toolbar-chip.is-unknown {
+    border-style: dashed;
+    color: #6c757d;
 }
 
-/* ── Preview iframe wrapper ───────────────────────────────────────────────── */
-
-.tool-tinycustomizer-preview {
-    padding: 1rem;
+.tiny-toolbar-builder .tiny-toolbar-chip svg {
+    width: 18px;
+    height: 18px;
 }
 
-/* ── Responsive tweaks ────────────────────────────────────────────────────── */
-
-@media (max-width: 991.98px) {
-    #tinycustomizer-preview-frame {
-        height: 300px !important;
-    }
+.tiny-toolbar-builder .tiny-toolbar-chip .btn {
+    padding: 0 .25rem;
+    line-height: 1;
 }

@@ -1,80 +1,59 @@
-name: Generate Release ZIP
+name: Prepare release
+
+# Prepara uma release como RASCUNHO (nada é entregue à comunidade ainda):
+# valida a versão, o CHANGELOG e o CI, monta o ZIP e cria o rascunho com as notas.
+# Depois, revise o rascunho no GitHub e clique em "Publish release": é a publicação que cria a tag.
+# O workflow "Verify published release" confere o resultado.
+# Execução com dry-run: só valida e monta o ZIP (fica como artefato), sem criar o rascunho.
 
 on:
-  push:
-    tags:
-      - 'v*'
-  release:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Only validate and build the package; do not create the draft release'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
+  checks: read
 
 jobs:
-  release:
-    name: Build and publish release ZIP
+  prepare:
+    name: Prepare the draft release
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Check out repository code
+        uses: actions/checkout@v7
+
+      - name: Read plugin metadata
+        id: meta
+        run: bash .github/scripts/release.sh meta | tee -a "$GITHUB_OUTPUT"
+
+      - name: Check that this version was not released yet
+        if: ${{ !inputs.dry-run && !env.ACT }}
+        run: bash .github/scripts/release.sh not-released
+
+      - name: Check the changelog and write the release notes
+        run: bash .github/scripts/release.sh notes
+
+      - name: Build the plugin ZIP
+        run: bash .github/scripts/release.sh package
+
+      - name: Require green CI on this commit
+        if: ${{ !env.ACT }}
+        run: bash .github/scripts/release.sh ci-green "$GITHUB_SHA"
+
+      - name: Create the draft release
+        if: ${{ !inputs.dry-run && !env.ACT }}
+        run: bash .github/scripts/release.sh draft
+
+      - name: Keep the package as a workflow artifact (dry runs)
+        if: ${{ inputs.dry-run && !env.ACT }}
+        uses: actions/upload-artifact@v7
         with:
-          fetch-depth: 0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install Node dependencies
-        run: npm ci --ignore-scripts
-
-      - name: Build AMD modules (Grunt)
-        run: npx grunt amd --force || true
-
-      - name: Determine version tag
-        id: version
-        run: |
-          if [[ "${{ github.ref_type }}" == "tag" ]]; then
-            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tag=latest" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Create release ZIP
-        uses: thedoctor0/zip-release@0.7.6
-        with:
-          type: 'zip'
-          filename: 'tool_tinycustomizer-${{ steps.version.outputs.tag }}.zip'
-          exclusions: >-
-            .git
-            .github
-            node_modules
-            .eslintrc
-            .stylelintrc
-            Gruntfile.js
-            package.json
-            package-lock.json
-            phpunit.xml
-            behat.yml
-            CONTRIBUTING.md
-            SECURITY.md
-
-      - name: Upload ZIP as workflow artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tool_tinycustomizer-${{ steps.version.outputs.tag }}
-          path: tool_tinycustomizer-${{ steps.version.outputs.tag }}.zip
-          retention-days: 30
-
-      - name: Upload ZIP to GitHub Release
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v2
-        with:
-          files: tool_tinycustomizer-${{ steps.version.outputs.tag }}.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ steps.meta.outputs.zip }}
+          path: dist/
